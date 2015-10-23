@@ -48,4 +48,6 @@ function cipher_form() {
     '#type' => 'submit',
     '#value' => 'Encrypt',
   );
+
+  return $form;
 }
