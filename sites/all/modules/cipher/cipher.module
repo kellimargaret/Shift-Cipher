@@ -3,31 +3,31 @@
 function cipher_menu() {
   $items = array();
   $items['cipher'] = array(
-    'title' => 'Shift Cipher Form',
-    'type' => MENU_NORMAL_ITEM,
-    'access callback' = TRUE,
+    'title' => 'Cipher Entry Form',
     'page callback' => 'drupal_get_form',
-    'page argument' => array('cipher_form'),
+    'page arguments' => array('cipher_form'),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['cipher_success_page'] = array(
-    'title' => 'Success',
-    'page callback' => 'cipher_success',
+  $items['cipher_results'] = array(
+    'title' => 'Cipher Results',
+    'page callback' => 'cipher_results_page',
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
+
   return $items;
 }
 
 function cipher_form() {
   $form['shift_value'] = array(
-    '#title' => 'Shift Value',
+    '#title' => 'Shift value',
     '#type' => 'textfield',
-    '#description' => t('Enter the value to shift by.'),
+    '#description' => t('Enter either Right or Left to shift by.'),
     '#element_validate' => array('element_validate_integer_positive'),
     '#required' => TRUE,
   );
-
   $form['direction'] = array(
     '#title' => 'Direction',
     '#type' => 'textfield',
@@ -35,11 +35,10 @@ function cipher_form() {
     '#element_validate' => array('element_validate_left_right'),
     '#required' => TRUE,
   );
-
   $form['phrase'] = array(
     '#title' => 'Phrase',
     '#type' => 'textfield',
-    '#description' => t('Enter the phrase you would like to encrypt.'),
+    '#description' => t('Enter the phrase to encrypt.'),
     '#element_validate' => array('element_validate_specialchars'),
     '#required' => TRUE,
   );
@@ -50,4 +49,16 @@ function cipher_form() {
   );
 
   return $form;
+}
+
+function element_validate_left_right($element) {
+  if ($element['#value'] != 'left' && $element['#value'] != 'right') {
+    form_error($element, t('Direction must be either left or right.'));
+  }
+}
+
+function element_validate_specialchars($element) {
+  if (preg_match("([^\w ,.;!])", $element['#value'])) {
+    form_error($element, t('Phrase must contain only alphanumeric characters, spaces and punctuation.'));
+  }
 }
