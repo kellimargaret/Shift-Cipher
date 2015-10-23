@@ -26,5 +26,13 @@ function cipher_form() {
     '#description' => t('Enter the value to shift by.'),
     '#element_validate' => array('element_validate_integer_positive'),
     '#required' => TRUE,
+  );
+
+  $form['direction'] = array(
+    '#title' => 'Direction',
+    '#type' => 'textfield',
+    '#description' => t('Enter the direction.'),
+    '#element_validate' => array('element_validate_left_right'),
+    '#required' => TRUE,
   )
 }
