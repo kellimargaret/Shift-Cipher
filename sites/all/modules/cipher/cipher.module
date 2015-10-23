@@ -62,3 +62,53 @@ function element_validate_specialchars($element) {
     form_error($element, t('Phrase must contain only alphanumeric characters, spaces and punctuation.'));
   }
 }
+
+function cipher_form_submit($form, &$form_state) {
+  $shift_value = $form_state['values']['shift_value'];
+  $direction = $form_state['values']['direction'];
+  $phrase = $form_state['values']['phrase'];
+
+  $phrase_chars = str_split(strtolower($phrase));
+  $encoded_phrase = "";
+
+  foreach ($phrase_chars as $char) {
+    // Only do shifting if this letter is not space or punctuation
+    if (ctype_alnum($char)) {
+      // Convert to number in 0-26 range (ascii lowercase a-z starts at 97)
+      $ascii_number = ord($char) - 97;
+      $encoded_ascii_number = null;
+
+      if ($direction == 'left') {
+        $encoded_ascii_number = $ascii_number - $shift_value;
+
+        // Account for shifts to the left of the alphabet range
+        if ($encoded_ascii_number < 0) {
+          $encoded_ascii_number = 26 - abs($encoded_ascii_number);
+        }
+
+      }
+      elseif ($direction == 'right') {
+        $encoded_ascii_number = $ascii_number + $shift_value;
+
+        // Account for shifts to the right of the alphabet range
+        if ($encoded_ascii_number > 25) {
+          $encoded_ascii_number = $encoded_ascii_number - 26;
+        }
+      }
+
+      // Convert back to letter and add to encoded phrase
+      $encoded_phrase .= chr($encoded_ascii_number + 97);
+    }
+    else {
+      // This character is a space or punctuation, add it as-is.
+      $encoded_phrase .= $char;
+    };
+  }
+
+  $_SESSION['encoded_phrase'] = $encoded_phrase;
+  $form_state['redirect'] = 'cipher_results';
+}
+
+function cipher_results_page() {
+  return '<h1>Encoded phrase: </h1><p>' . $_SESSION['encoded_phrase'] . '</p>';
+}
