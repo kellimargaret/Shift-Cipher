@@ -34,5 +34,18 @@ function cipher_form() {
     '#description' => t('Enter the direction.'),
     '#element_validate' => array('element_validate_left_right'),
     '#required' => TRUE,
-  )
+  );
+
+  $form['phrase'] = array(
+    '#title' => 'Phrase',
+    '#type' => 'textfield',
+    '#description' => t('Enter the phrase you would like to encrypt.'),
+    '#element_validate' => array('element_validate_specialchars'),
+    '#required' => TRUE,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Encrypt',
+  );
 }
